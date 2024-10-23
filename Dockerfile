@@ -35,14 +35,15 @@ RUN  if [[ -z "${REF}" ]]; then \
         apkArch="$(apk --print-arch)"; \
         Build_Args="";\
         case "$apkArch" in \
-            x86_64) Build_Args='-Dcpu=x86_64' ;; \
-            aarch64) Build_Args='-Dcpu=generic+v8a' ;; \
-            armv7) Build_Args='-Dcpu=generic+v7a';; \
+            x86_64) Build_Args='-Dtarget=native-native-musl -Dcpu=x86_64' ;; \
+            aarch64) Build_Args='-Dtarget=aarch64-linux-musl ' ;; \
+            armv7) Build_Args='-Dtarget=arm-linux-musleabi ';; \
             ppc64le) Build_Args='';; \
             riscv64)  Build_Args='';; \
             *) echo >&2 "unsupported architecture: $apkArch"; exit 1 ;; \
         esac; \
-        zig build -Dtarget=native-native-musl ${Build_Args}  &&\
+        echo $Build_Args &&\
+        zig build ${Build_Args}  &&\
         # ls zig-out/bin -lash \
         mv zig-out/bin/chinadns-ng@* zig-out/bin/chinadns-ng \
     ;fi 
